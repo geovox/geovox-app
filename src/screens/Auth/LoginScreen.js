@@ -109,7 +109,7 @@ const LoginScreen = ({ navigation }) => {
 						<TouchableWithoutFeedback
 							onPress={() => navigation.navigate(Routes.Register)}
 						>
-							<Text>Sign up</Text>
+							<Text style={{ fontFamily: Font.SemiBold }}>Sign up</Text>
 						</TouchableWithoutFeedback>
 					</Text>
 				</DismissKeyboard>

@@ -90,7 +90,7 @@ const RegisterScreen = ({ navigation }) => {
 						<TouchableWithoutFeedback
 							onPress={() => navigation.navigate(Routes.Login)}
 						>
-							<Text style={{ fontFamily: Font.Regular }}>Login</Text>
+							<Text style={{ fontFamily: Font.SemiBold }}>Login</Text>
 						</TouchableWithoutFeedback>
 					</Text>
 				</DismissKeyboard>

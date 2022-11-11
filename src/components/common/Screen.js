@@ -11,9 +11,7 @@ const Screen = ({ children, style, transparent = false, containerStyle }) => {
 				style={[
 					{
 						flex: 1,
-						backgroundColor: transparent
-							? 'transparent'
-							: Colors['dark-gray-1'],
+						backgroundColor: transparent ? 'transparent' : Colors.black,
 						width: '100%',
 						height: '100%',
 					},
@@ -21,10 +19,7 @@ const Screen = ({ children, style, transparent = false, containerStyle }) => {
 				]}
 			>
 				<SafeAreaView style={[{ flex: 1 }]}>
-					<StatusBar
-						barStyle="light-content"
-						backgroundColor={Colors['dark-gray-1']}
-					/>
+					<StatusBar barStyle="light-content" backgroundColor={Colors.black} />
 					<View style={[{ flex: 1 }, style]}>{children}</View>
 				</SafeAreaView>
 			</View>
