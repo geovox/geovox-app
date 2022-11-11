@@ -25,6 +25,7 @@ const RegisterScreen = ({ navigation }) => {
 
 	const onSubmit = (data) => {
 		console.log(data);
+		navigation.navigate(Routes.SeedPhrase);
 	};
 
 	return (
@@ -78,7 +79,7 @@ const RegisterScreen = ({ navigation }) => {
 						)}
 					/>
 					{errors.email && (
-						<Text style={_styles.errorText}>Email is required</Text>
+						<Text style={_styles.errorText}>Please enter valid email</Text>
 					)}
 					<Button
 						title="Register"

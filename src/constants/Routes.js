@@ -2,6 +2,8 @@ export default {
 	AuthNavigator: 'AuthNavigator',
 	Login: 'Login',
 	Register: 'Register',
+	SeedPhrase: 'SeedPhrase',
+	ConfirmSeedPhrase: 'ConfirmSeedPhrase',
 
 	HomeNavigator: 'HomeNavigator',
 	Profile: 'Profile',

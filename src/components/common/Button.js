@@ -20,9 +20,9 @@ const styles = StyleSheet.create({
 	button: {
 		alignItems: 'center',
 		justifyContent: 'center',
-		paddingVertical: 12,
+		paddingVertical: 14,
 		paddingHorizontal: 32,
-		borderRadius: 4,
+		borderRadius: 8,
 		elevation: 3,
 		backgroundColor: Colors.orange,
 	},
