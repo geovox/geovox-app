@@ -5,13 +5,39 @@ import { Colors } from '../../constants/Colors';
 import { Font } from '../../constants/Font';
 import { ResponsiveFont } from '../../utils/ResponsiveFont';
 
-export const Button = ({ onPress, title, containerStyle, textStyle }) => {
+export const Button = ({
+	onPress,
+	title,
+	containerStyle,
+	textStyle,
+	type = 'orange',
+}) => {
+	let buttonColor;
+	let textColor;
+
+	if (type === 'orange') {
+		buttonColor = { backgroundColor: Colors.orange };
+		textColor = { color: Colors.black };
+	} else if (type === 'white') {
+		buttonColor = { backgroundColor: Colors.white };
+		textColor = { color: Colors.black };
+	} else if (type === 'transparent') {
+		buttonColor = {
+			backgroundColor: 'transparent',
+			borderColor: Colors.orange,
+			borderWidth: 1,
+		};
+		textColor = { color: Colors.orange };
+	}
+
 	return (
 		<Pressable
-			style={StyleSheet.flatten([styles.button, containerStyle])}
+			style={StyleSheet.flatten([styles.button, buttonColor, containerStyle])}
 			onPress={onPress}
 		>
-			<Text style={StyleSheet.flatten([styles.text, textStyle])}>{title}</Text>
+			<Text style={StyleSheet.flatten([styles.text, textColor, textStyle])}>
+				{title}
+			</Text>
 		</Pressable>
 	);
 };
@@ -24,7 +50,6 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 32,
 		borderRadius: 8,
 		elevation: 3,
-		backgroundColor: Colors.orange,
 	},
 	text: {
 		fontSize: ResponsiveFont(12),

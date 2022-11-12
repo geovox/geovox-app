@@ -4,9 +4,9 @@ import { StyleSheet } from 'react-native';
 
 import { Colors } from '../constants/Colors';
 import Routes from '../constants/Routes';
-import ConfirmSeedPhraseScreen from '../screens/Auth/ConfirmSeedPhraseScreen';
-import MapScreen from '../screens/Explore/Map';
-import ProfileScreen from '../screens/Profile/ProfileScreen';
+import MapScreen from '../screens/Explore/MapScreen';
+import HomeScreen from '../screens/User/HomeScreen';
+import ProfileScreen from '../screens/User/ProfileScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -18,10 +18,11 @@ const HomeNavigator = () => {
 				tabBarShowLabel: false,
 				tabBarStyle: styles.tabBarStyle,
 			}}
+			initialRouteName={Routes.Map}
 		>
 			<Tab.Screen
 				name={Routes.Guide}
-				component={ConfirmSeedPhraseScreen}
+				component={HomeScreen}
 				options={{
 					tabBarIcon: ({ focused }) => (
 						<AntDesign

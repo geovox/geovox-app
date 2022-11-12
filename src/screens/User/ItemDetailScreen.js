@@ -2,12 +2,12 @@ import { Text } from 'react-native';
 
 import Screen from '../../components/common/Screen';
 
-const MapScreen = () => {
+const ItemDetailScreen = () => {
 	return (
 		<Screen>
-			<Text>MapScreen</Text>
+			<Text>ItemDetailScreen</Text>
 		</Screen>
 	);
 };
 
-export default MapScreen;
+export default ItemDetailScreen;

@@ -8,10 +8,9 @@ import ProfileNFT from '../../components/profile/ProfileNFT';
 const ProfileScreen = () => {
 	return (
 		<Screen>
-			<ScrollView style={{ paddingHorizontal: 16 }}>
+			<ScrollView style={{ marginTop: 16, paddingHorizontal: 16 }}>
 				<ProfileAccount />
 				<ProfileLevelProgress />
-
 				<ProfileNFT />
 				<ProfileNFT />
 				<ProfileNFT />
