@@ -10,6 +10,7 @@ import Routes from './src/constants/Routes';
 import useStore from './src/lib/store';
 import AuthNavigator from './src/navigator/AuthNavigator';
 import HomeNavigator from './src/navigator/HomeNavigator';
+import LandingScreen from './src/screens/Landing/LandingScreen';
 import ItemDetailScreen from './src/screens/User/ItemDetailScreen';
 
 const Stack = createNativeStackNavigator();

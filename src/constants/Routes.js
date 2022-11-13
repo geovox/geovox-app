@@ -11,4 +11,5 @@ export default {
 	Map: 'Map',
 
 	ItemDetail: 'ItemDetail',
+	Landing: 'Landing',
 };

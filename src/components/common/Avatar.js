@@ -16,6 +16,8 @@ const randomGradientColorAvatar = (text) => {
 };
 
 const Avatar = ({ accountId }) => {
+	if (!accountId) return null;
+
 	return (
 		<View
 			style={{
