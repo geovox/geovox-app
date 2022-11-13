@@ -5,11 +5,11 @@ import ProfileAccount from '../../components/profile/ProfileAccount';
 import ProfileLevelProgress from '../../components/profile/ProfileLevelProgress';
 import ProfileNFT from '../../components/profile/ProfileNFT';
 
-const ProfileScreen = () => {
+const ProfileScreen = ({ navigation }) => {
 	return (
 		<Screen>
 			<ScrollView style={{ marginTop: 16, paddingHorizontal: 16 }}>
-				<ProfileAccount />
+				<ProfileAccount navigation={navigation} />
 				<ProfileLevelProgress />
 				<ProfileNFT />
 				<ProfileNFT />

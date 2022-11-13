@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 
 import { Button } from '../../components/common/Button';
+import { CustomToast } from '../../components/common/CustomToast';
 import Screen from '../../components/common/Screen';
 import { Colors } from '../../constants/Colors';
 import { Font } from '../../constants/Font';
@@ -16,16 +17,16 @@ import Routes from '../../constants/Routes';
 import { ResponsiveFont } from '../../utils/ResponsiveFont';
 
 const SeedPhraseScreen = ({ navigation, route }) => {
-	// const {
-	// 	data = 'mantap betul ini seed phrase bukan maknaya lokasi lebih dadrinya',
-	// } = route.params;
-	const data = {
-		seedPhrase:
-			'mantap betul ini seed phrase bukan maknaya lokasi lebih dadrinya mengapa',
-	};
+	const { data } = route.params;
+
 	const copyToClipboard = async () => {
 		await Clipboard.setStringAsync(data.seedPhrase);
-		// CustomToast('Seed password copied to clipboard', 0, 'default', 1000);
+		CustomToast({
+			message: 'Seed phrase copied to clipboard!',
+			delay: 0,
+			type: 'default',
+			duration: 1000,
+		});
 	};
 
 	useEffect(() => {
@@ -49,12 +50,12 @@ const SeedPhraseScreen = ({ navigation, route }) => {
 	return (
 		<Screen style={{ margin: 32, flex: 1, justifyContent: 'center' }}>
 			<Text style={styles.textDesc}>
-				This is your seed password, it has 12 words and used as signature for
-				your data so no one is able to modify or delete your data.
+				This is your seed phrase, it has 12 words and used as signature for your
+				data so no one is able to modify or delete your data.
 			</Text>
 			<Text style={[styles.textDesc, { marginTop: 24 }]}>
-				Keep this seed password save and do not share them with anyone. Paras
-				will not be able to recover your account if this seed password is lost.
+				Keep this seed phrase save and do not share them with anyone. We will
+				not be able to recover your account if this seed phrase is lost.
 			</Text>
 			<View
 				style={{
@@ -64,7 +65,7 @@ const SeedPhraseScreen = ({ navigation, route }) => {
 					alignItems: 'center',
 				}}
 			>
-				<Text style={styles.textDesc}>Seed Password</Text>
+				<Text style={styles.textDesc}>Seed phrase</Text>
 				<TouchableNativeFeedback onPress={copyToClipboard}>
 					<Text style={[styles.textDesc, styles.seedPhraseCopy]}>Copy</Text>
 				</TouchableNativeFeedback>

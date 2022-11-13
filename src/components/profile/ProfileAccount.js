@@ -1,16 +1,37 @@
-import { Image, StyleSheet, Text, View } from 'react-native';
+import * as SecureStore from 'expo-secure-store';
+import {
+	Image,
+	StyleSheet,
+	Text,
+	TouchableNativeFeedback,
+	View,
+} from 'react-native';
 
 import { Colors } from '../../constants/Colors';
+import { STORE_KEY } from '../../constants/Common';
 import { Font } from '../../constants/Font';
+import Routes from '../../constants/Routes';
+import useStore from '../../lib/store';
 import { ResponsiveFont } from '../../utils/ResponsiveFont';
 import Avatar from '../common/Avatar';
 
-const ProfileAccount = () => {
+const ProfileAccount = ({ navigation }) => {
+	const { accountId, email, removeUser } = useStore();
+
+	const onClickLogout = async () => {
+		removeUser();
+		await SecureStore.deleteItemAsync(STORE_KEY);
+		navigation.navigate(Routes.AuthNavigator, { screen: Routes.Login });
+	};
+
 	return (
 		<View>
+			<TouchableNativeFeedback onPress={onClickLogout}>
+				<Text style={styles.logoutText}>Logout</Text>
+			</TouchableNativeFeedback>
 			<Avatar />
-			<Text style={styles.accountText}>brown.xq.near</Text>
-			<Text style={styles.accountEmailText}>brown123@gmail.com</Text>
+			<Text style={styles.accountText}>{accountId}</Text>
+			<Text style={styles.accountEmailText}>{email}</Text>
 
 			<View style={styles.accountLevelContainer}>
 				<Image
@@ -58,5 +79,14 @@ const styles = StyleSheet.create({
 		fontFamily: Font.Bold,
 		color: Colors.white,
 		fontSize: ResponsiveFont(11),
+	},
+	logoutText: {
+		position: 'absolute',
+		top: 0,
+		right: 0,
+		fontFamily: Font.Regular,
+		fontSize: ResponsiveFont(11),
+		color: Colors['emotion-red'],
+		zIndex: 1,
 	},
 });

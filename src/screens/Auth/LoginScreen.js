@@ -1,4 +1,6 @@
+import axios from 'axios';
 import * as Clipboard from 'expo-clipboard';
+import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import {
 	KeyboardAvoidingView,
@@ -10,15 +12,20 @@ import {
 } from 'react-native';
 
 import { Button } from '../../components/common/Button';
+import { CustomToast } from '../../components/common/CustomToast';
 import DismissKeyboard from '../../components/common/DismissKeyboard';
 import Screen from '../../components/common/Screen';
+import { API_URL } from '../../constants/Api';
 import { Colors } from '../../constants/Colors';
-import { isIOS } from '../../constants/Common';
+import { isIOS, ROOT_ACCOUNT } from '../../constants/Common';
 import { Font } from '../../constants/Font';
 import Routes from '../../constants/Routes';
+import useStore from '../../lib/store';
 import { ResponsiveFont } from '../../utils/ResponsiveFont';
 
 const LoginScreen = ({ navigation }) => {
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const { setUser } = useStore();
 	const {
 		handleSubmit,
 		control,
@@ -26,8 +33,23 @@ const LoginScreen = ({ navigation }) => {
 		formState: { errors },
 	} = useForm();
 
-	const onSubmit = (data) => {
-		console.log(data);
+	const onSubmit = async (data) => {
+		setIsSubmitting(true);
+		try {
+			const res = await axios.post(`${API_URL}/login`, {
+				accountId: data.username + ROOT_ACCOUNT,
+				seed: data.seedphrase,
+			});
+			setUser({
+				accountId: res.data.accountId,
+				email: res.data.email,
+				token: res.data.token,
+			});
+			navigation.navigate(Routes.HomeNavigator, { screen: Routes.Guide });
+		} catch (error) {
+			CustomToast({ message: error.response.data.message, type: 'error' });
+		}
+		setIsSubmitting(false);
 	};
 
 	return (
@@ -57,7 +79,7 @@ const LoginScreen = ({ navigation }) => {
 									placeholder="Username"
 									placeholderTextColor={Colors['dark-gray-4']}
 								/>
-								<Text style={_styles.textHelper}>.xq.testnet</Text>
+								<Text style={_styles.textHelper}>{ROOT_ACCOUNT}</Text>
 							</View>
 						)}
 					/>
@@ -87,7 +109,7 @@ const LoginScreen = ({ navigation }) => {
 								/>
 								<TouchableWithoutFeedback
 									onPress={async () => {
-										const seedphrase = await Clipboard.getUrlAsync();
+										const seedphrase = await Clipboard.getStringAsync();
 										setValue('seedphrase', seedphrase);
 									}}
 								>
@@ -102,6 +124,7 @@ const LoginScreen = ({ navigation }) => {
 					<Button
 						containerStyle={_styles.buttonContainer}
 						title="Login"
+						isLoading={isSubmitting}
 						onPress={handleSubmit(onSubmit)}
 					/>
 					<Text style={_styles.registText}>
@@ -133,7 +156,7 @@ const _styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
-		marginBottom: 12,
+		marginTop: 12,
 	},
 	textInput: {
 		fontFamily: Font.Regular,

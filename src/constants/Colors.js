@@ -3,6 +3,8 @@ export const Colors = {
 	orange: '#FCA311',
 	blue: '#14213D',
 	black: '#000000',
+	'emotion-red': '#FF6464',
+	'emotion-green': '#17B690',
 	'dark-gray-1': '#111111',
 	'dark-gray-2': '#222222',
 	'dark-gray-3': '#333333',

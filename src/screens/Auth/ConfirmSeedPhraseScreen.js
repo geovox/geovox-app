@@ -1,5 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
+import axios from 'axios';
+import { useState } from 'react';
 import {
+	Keyboard,
 	StyleSheet,
 	Text,
 	TextInput,
@@ -8,15 +11,58 @@ import {
 } from 'react-native';
 
 import { Button } from '../../components/common/Button';
+import { CustomToast } from '../../components/common/CustomToast';
 import DismissKeyboard from '../../components/common/DismissKeyboard';
 import Screen from '../../components/common/Screen';
+import { API_URL } from '../../constants/Api';
 import { Colors } from '../../constants/Colors';
 import { Font } from '../../constants/Font';
+import Routes from '../../constants/Routes';
+import useStore from '../../lib/store';
 import { ResponsiveFont } from '../../utils/ResponsiveFont';
 
 const numb = Math.floor(Math.random() * 12 + 1);
 
-const ConfirmSeedPhraseScreen = ({ navigation }) => {
+const ConfirmSeedPhraseScreen = ({ navigation, route }) => {
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [confirmText, setConfirmText] = useState(null);
+
+	const { setUser } = useStore();
+
+	const { data } = route.params;
+	const seedPhrase = data.seedPhrase.split(' ');
+
+	const onSubmit = async () => {
+		Keyboard.dismiss();
+		const isCorrect = seedPhrase[numb - 1] === confirmText;
+		if (!isCorrect) {
+			CustomToast({
+				message: 'Please enter the correct word',
+				delay: 0,
+				type: 'error',
+				duration: 1000,
+			});
+			return;
+		}
+
+		setIsSubmitting(true);
+		try {
+			const res = await axios.post(`${API_URL}/login`, {
+				accountId: data.accountId,
+				seed: data.seedPhrase,
+			});
+			setUser({
+				accountId: res.data.accountId,
+				email: res.data.email,
+				token: res.data.token,
+			});
+			navigation.navigate(Routes.HomeNavigator, { screen: Routes.Guide });
+		} catch (error) {
+			CustomToast({ message: error.response.data.message, type: 'error' });
+		}
+		setIsSubmitting(false);
+	};
+
 	return (
 		<Screen style={{ margin: 32, flex: 1 }}>
 			<DismissKeyboard style={{ justifyContent: 'center' }}>
@@ -32,11 +78,13 @@ const ConfirmSeedPhraseScreen = ({ navigation }) => {
 				</TouchableWithoutFeedback>
 				<Text style={styles.textDesc}>{`Whats the ${numb} word?`}</Text>
 				<TextInput
+					value={confirmText}
+					onChangeText={setConfirmText}
 					style={styles.textInput}
 					autoCapitalize="none"
 					selectionColor={Colors.white}
 				/>
-				<Button title="Confirm" />
+				<Button title="Confirm" onPress={onSubmit} isLoading={isSubmitting} />
 			</DismissKeyboard>
 		</Screen>
 	);

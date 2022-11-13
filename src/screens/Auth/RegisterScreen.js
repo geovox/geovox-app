@@ -1,3 +1,5 @@
+import axios from 'axios';
+import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import {
 	KeyboardAvoidingView,
@@ -8,8 +10,10 @@ import {
 } from 'react-native';
 
 import { Button } from '../../components/common/Button';
+import { CustomToast } from '../../components/common/CustomToast';
 import DismissKeyboard from '../../components/common/DismissKeyboard';
 import Screen from '../../components/common/Screen';
+import { API_URL } from '../../constants/Api';
 import { Colors } from '../../constants/Colors';
 import { isIOS } from '../../constants/Common';
 import { Font } from '../../constants/Font';
@@ -17,15 +21,25 @@ import Routes from '../../constants/Routes';
 import { ResponsiveFont } from '../../utils/ResponsiveFont';
 
 const RegisterScreen = ({ navigation }) => {
+	const [isSubmitting, setIsSubmitting] = useState(false);
 	const {
 		handleSubmit,
 		control,
 		formState: { errors },
 	} = useForm();
 
-	const onSubmit = (data) => {
-		console.log(data);
-		navigation.navigate(Routes.SeedPhrase);
+	const onSubmit = async (data) => {
+		setIsSubmitting(true);
+		try {
+			const res = await axios.post(`${API_URL}/register`, {
+				accountId: data.username,
+				email: data.email,
+			});
+			navigation.navigate(Routes.SeedPhrase, { data: res.data });
+		} catch (error) {
+			CustomToast({ message: error.response.data.message, type: 'error' });
+		}
+		setIsSubmitting(false);
 	};
 
 	return (
@@ -83,6 +97,7 @@ const RegisterScreen = ({ navigation }) => {
 					)}
 					<Button
 						title="Register"
+						isLoading={isSubmitting}
 						onPress={handleSubmit(onSubmit)}
 						containerStyle={_styles.buttonContainer}
 					/>
@@ -117,7 +132,7 @@ const _styles = StyleSheet.create({
 		paddingRight: 4,
 		borderRadius: 4,
 		backgroundColor: Colors['dark-gray-2'],
-		marginBottom: 12,
+		marginTop: 12,
 	},
 	errorText: {
 		fontFamily: Font.Light,
