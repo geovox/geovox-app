@@ -1,7 +1,7 @@
 {
 	"expo": {
-		"name": "ProjectGE",
-		"slug": "ProjectGE",
+		"name": "Geovox",
+		"slug": "Geovox",
 		"version": "1.0.0",
 		"orientation": "portrait",
 		"icon": "./assets/icon.png",
@@ -17,14 +17,14 @@
 		"assetBundlePatterns": ["**/*"],
 		"ios": {
 			"supportsTablet": true,
-			"bundleIdentifier": "com.ahnafalfariza.ProjectGE"
+			"bundleIdentifier": "com.ahnafalfariza.Geovox"
 		},
 		"android": {
 			"adaptiveIcon": {
 				"foregroundImage": "./assets/adaptive-icon.png",
 				"backgroundColor": "#000000"
 			},
-			"package": "com.ahnafalfariza.ProjectGE"
+			"package": "com.ahnafalfariza.Geovox"
 		},
 		"web": {
 			"favicon": "./assets/favicon.png"

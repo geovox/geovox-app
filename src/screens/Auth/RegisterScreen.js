@@ -131,7 +131,7 @@ const _styles = StyleSheet.create({
 		padding: 12,
 		paddingRight: 4,
 		borderRadius: 4,
-		backgroundColor: Colors['dark-gray-2'],
+		backgroundColor: Colors['dark-gray-1.5'],
 		marginTop: 12,
 	},
 	errorText: {
