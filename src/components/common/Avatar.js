@@ -7,10 +7,11 @@ const randomGradientColorAvatar = (text) => {
 	for (let i = 0; i < 6; i++) {
 		hexCode +=
 			HEX_STRING[
-				Math.floor(((text.charCodeAt(i) - 33) / (122 - 33)) * HEX_STRING.length)
+				Math.floor(
+					((text.charCodeAt(i) - 33) / (122 - 33)) * HEX_STRING.length - 1
+				)
 			];
 	}
-	console.log('hexcode', hexCode);
 	return hexCode;
 };
 

@@ -18,7 +18,7 @@ const HomeNavigator = () => {
 				tabBarShowLabel: false,
 				tabBarStyle: styles.tabBarStyle,
 			}}
-			initialRouteName={Routes.Map}
+			initialRouteName={Routes.Guide}
 		>
 			<Tab.Screen
 				name={Routes.Guide}

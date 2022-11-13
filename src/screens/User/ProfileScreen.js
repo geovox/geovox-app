@@ -43,7 +43,10 @@ const ProfileScreen = ({ navigation }) => {
 
 	return (
 		<Screen>
-			<ScrollView style={{ marginTop: 16, paddingHorizontal: 16 }}>
+			<ScrollView
+				bounces={false}
+				style={{ marginTop: 16, paddingHorizontal: 16 }}
+			>
 				<ProfileAccount navigation={navigation} level={profileData?.level} />
 				<ProfileLevelProgress profile={profileData} />
 				{tokenData?.map((token) => (

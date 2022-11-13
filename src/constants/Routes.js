@@ -9,4 +9,6 @@ export default {
 	Profile: 'Profile',
 	Guide: 'Guide',
 	Map: 'Map',
+
+	ItemDetail: 'ItemDetail',
 };

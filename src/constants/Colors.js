@@ -6,6 +6,7 @@ export const Colors = {
 	'emotion-red': '#FF6464',
 	'emotion-green': '#17B690',
 	'dark-gray-1': '#111111',
+	'dark-gray-1.5': '#151515',
 	'dark-gray-2': '#222222',
 	'dark-gray-3': '#333333',
 	'dark-gray-4': '#444444',

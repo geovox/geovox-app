@@ -1,15 +1,19 @@
+import { useNavigation } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { Colors } from '../../constants/Colors';
 import { Font } from '../../constants/Font';
+import Routes from '../../constants/Routes';
 import { parseImgUrl } from '../../utils';
 import { ResponsiveFont } from '../../utils/ResponsiveFont';
 
 const ProfileNFT = ({ data }) => {
+	const navigation = useNavigation();
+
 	return (
 		<TouchableOpacity
-			onPress={() => console.log('click parent')}
+			onPress={() => navigation.navigate(Routes.ItemDetail, { data })}
 			style={styles.profileNFTContainer}
 		>
 			<Image

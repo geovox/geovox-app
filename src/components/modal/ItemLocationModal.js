@@ -1,12 +1,19 @@
 import { FontAwesome, AntDesign } from '@expo/vector-icons';
 import calculateDistance from '@turf/distance';
+import axios from 'axios';
+import { useState } from 'react';
 import { Image, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import Modal from 'react-native-modal';
+import { RootSiblingParent } from 'react-native-root-siblings';
 
 import { Button } from '../../components/common/Button';
+import { API_URL } from '../../constants/Api';
 import { Colors } from '../../constants/Colors';
 import { Font } from '../../constants/Font';
+import useStore from '../../lib/store';
 import { ResponsiveFont } from '../../utils/ResponsiveFont';
+import { CustomToast } from '../common/CustomToast';
+import CollectingItemModal from './CollectingItemModal';
 
 const ItemLocationModal = ({
 	isVisible,
@@ -14,15 +21,44 @@ const ItemLocationModal = ({
 	userLocation,
 	itemDetail,
 }) => {
+	const [isCollecting, setIsCollecting] = useState(false);
+	const [showModal, setShowModal] = useState(false);
+	const { token } = useStore();
+
 	const distance = calculateDistance(
 		[userLocation?.longitude, userLocation?.latitude],
 		[itemDetail?.longitude, itemDetail?.latitude],
 		{ units: 'meters' }
 	);
 	const isAbleToCollect = distance <= 10;
-	const hasCollected = true;
+	const hasCollected = false;
 
 	if (!itemDetail) return null;
+
+	const handleCollect = async () => {
+		if (!isAbleToCollect) {
+			setShowModal(true);
+			return;
+		}
+
+		setIsCollecting(true);
+		setShowModal(true);
+		try {
+			await axios.post(
+				`${API_URL}/mint-nft`,
+				{
+					latitude: userLocation.latitude,
+					longitude: userLocation.longitude,
+					_id: itemDetail._id,
+				},
+				{ headers: { Authorization: token } }
+			);
+		} catch (error) {
+			setShowModal(false);
+			CustomToast({ message: error.response.data.message, type: 'error' });
+		}
+		setIsCollecting(false);
+	};
 
 	return (
 		<Modal
@@ -35,87 +71,101 @@ const ItemLocationModal = ({
 			swipeDirection={['down']}
 			onSwipeComplete={onClose}
 		>
-			<SafeAreaView style={styles.safeAreaContainer}>
-				<View style={styles.container}>
-					<AntDesign
-						name="close"
-						size={24}
-						color={Colors.white}
-						onPress={onClose}
-						style={{ position: 'absolute', right: 8, top: 8 }}
-					/>
-					<Image
-						source={{
-							uri: 'https://paras-cdn.imgix.net/e5abc27249c2f187b9519855a854221193abf412',
-						}}
-						style={styles.imageStyle}
-					/>
-					<Text style={styles.titleStyle}>{itemDetail.name}</Text>
-					<View style={styles.detailContainer}>
-						<Text style={styles.typeText}>Smart Contract</Text>
-						<Text style={styles.valueText}>nft.xq.testnet</Text>
-					</View>
-					<View style={styles.detailContainer}>
-						<Text style={styles.typeText}>Token ID</Text>
-						<Text style={styles.valueText}>2883</Text>
-					</View>
-					<View style={styles.detailContainer}>
-						<Text style={styles.typeText}>Collected</Text>
-						<Text style={styles.valueText}>23/50</Text>
-					</View>
-					<View style={styles.detailContainer}>
-						<Text style={styles.typeText}>Rarity</Text>
-						<Text style={styles.valueText}>Super Rare</Text>
-					</View>
-					<View>
-						<View style={styles.positionDistance}>
-							{!hasCollected && (
-								<>
-									<FontAwesome
-										name="location-arrow"
-										size={18}
-										color={Colors.white}
-									/>
+			<CollectingItemModal
+				itemDetail={itemDetail}
+				showModal={showModal}
+				onClose={() => setShowModal(false)}
+				onCloseAll={onClose}
+				status={
+					!isAbleToCollect
+						? 'unreachable'
+						: isCollecting
+						? 'loading'
+						: 'success'
+				}
+			/>
+			<RootSiblingParent>
+				<SafeAreaView style={styles.safeAreaContainer}>
+					<View style={styles.container}>
+						<AntDesign
+							name="close"
+							size={24}
+							color={Colors.white}
+							onPress={onClose}
+							style={{ position: 'absolute', right: 8, top: 8 }}
+						/>
+						<Image
+							source={{ uri: itemDetail.images }}
+							style={styles.imageStyle}
+						/>
+						<Text style={styles.titleStyle}>{itemDetail.name}</Text>
+						<View style={styles.detailContainer}>
+							<Text style={styles.typeText}>Smart Contract</Text>
+							<Text style={styles.valueText}>nft.xq.testnet</Text>
+						</View>
+						<View style={styles.detailContainer}>
+							<Text style={styles.typeText}>Token ID</Text>
+							<Text style={styles.valueText}>2883</Text>
+						</View>
+						<View style={styles.detailContainer}>
+							<Text style={styles.typeText}>Collected</Text>
+							<Text style={styles.valueText}>23/50</Text>
+						</View>
+						<View style={styles.detailContainer}>
+							<Text style={styles.typeText}>Rarity</Text>
+							<Text style={styles.valueText}>Super Rare</Text>
+						</View>
+						<View>
+							<View style={styles.positionDistance}>
+								{!hasCollected && (
+									<>
+										<FontAwesome
+											name="location-arrow"
+											size={18}
+											color={Colors.white}
+										/>
 
-									<Text style={styles.positionText}>
-										{isAbleToCollect
-											? "You're here"
-											: `${distance.toFixed(0)}m away`}
-									</Text>
-								</>
+										<Text style={styles.positionText}>
+											{isAbleToCollect
+												? "You're here"
+												: `${distance.toFixed(0)}m away`}
+										</Text>
+									</>
+								)}
+							</View>
+							{(!isAbleToCollect || hasCollected) && (
+								<Text style={styles.tofar}>
+									{hasCollected
+										? 'You’ve collected this item'
+										: "You're to far, come closer to the location to collect"}
+								</Text>
 							)}
 						</View>
-						{(!isAbleToCollect || hasCollected) && (
-							<Text style={styles.tofar}>
-								{hasCollected
-									? 'You’ve collected this item'
-									: "You're to far, come closer to the location to collect"}
-							</Text>
-						)}
+						<Button
+							title={
+								hasCollected
+									? 'See on my collections'
+									: isAbleToCollect
+									? 'Collect'
+									: 'Too far'
+							}
+							isLoading={isCollecting}
+							onPress={handleCollect}
+							containerStyle={{
+								width: '100%',
+								marginTop: 16,
+							}}
+							type={
+								hasCollected
+									? 'white'
+									: isAbleToCollect
+									? 'orange'
+									: 'transparent'
+							}
+						/>
 					</View>
-					<Button
-						title={
-							hasCollected
-								? 'See on my collections'
-								: isAbleToCollect
-								? 'Collect'
-								: 'Too far'
-						}
-						onPress={onClose}
-						containerStyle={{
-							width: '100%',
-							marginTop: 16,
-						}}
-						type={
-							hasCollected
-								? 'white'
-								: isAbleToCollect
-								? 'orange'
-								: 'transparent'
-						}
-					/>
-				</View>
-			</SafeAreaView>
+				</SafeAreaView>
+			</RootSiblingParent>
 		</Modal>
 	);
 };
