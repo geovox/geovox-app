@@ -2,24 +2,34 @@ import { Ionicons } from '@expo/vector-icons';
 import { Image, StyleSheet, Text, View } from 'react-native';
 
 import { Colors } from '../../constants/Colors';
+import { LEVEL_BADGE } from '../../constants/Common';
 import { Font } from '../../constants/Font';
 import { ResponsiveFont } from '../../utils/ResponsiveFont';
 
-const ProfileLevelProgress = () => {
+const ProfileLevelProgress = ({ profile }) => {
+	if (!profile) return <View style={{ marginVertical: 16 }} />;
+
+	const progress =
+		((profile.totalNftCollected - profile.levelStart) /
+			(profile.levelEnd - profile.levelStart)) *
+		100;
+
 	return (
 		<View style={styles.profileLevelContainer}>
 			<Image
-				source={require('../../../assets/badge/3.png')}
+				source={LEVEL_BADGE[profile.nextLevel]}
 				style={styles.imageBadge}
 			/>
 			<View style={styles.progressContainer}>
 				<Text style={styles.progressText}>
 					<Text>Collect </Text>
-					<Text style={{ fontFamily: Font.Bold }}>43 item</Text>
+					<Text style={{ fontFamily: Font.Bold }}>
+						{profile?.nextLevelRemaining} item
+					</Text>
 					<Text> to next level</Text>
 				</Text>
 				<View style={styles.progressBarBackground}>
-					<View style={styles.progressBarValue} />
+					<View style={[styles.progressBarValue, { width: `${progress}%` }]} />
 				</View>
 			</View>
 			<View>
@@ -72,6 +82,5 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 		backgroundColor: Colors.orange,
 		height: '100%',
-		width: '50%',
 	},
 });

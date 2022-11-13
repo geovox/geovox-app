@@ -1,22 +1,26 @@
+import dayjs from 'dayjs';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { Colors } from '../../constants/Colors';
 import { Font } from '../../constants/Font';
+import { parseImgUrl } from '../../utils';
 import { ResponsiveFont } from '../../utils/ResponsiveFont';
 
-const url =
-	'https://paras-cdn.imgix.net/e5abc27249c2f187b9519855a854221193abf412';
-
-const ProfileNFT = () => {
+const ProfileNFT = ({ data }) => {
 	return (
 		<TouchableOpacity
 			onPress={() => console.log('click parent')}
 			style={styles.profileNFTContainer}
 		>
-			<Image source={{ uri: url }} style={styles.image} />
+			<Image
+				source={{ uri: parseImgUrl(data.metadata.media) }}
+				style={styles.image}
+			/>
 			<View style={styles.detailContainer}>
-				<Text style={styles.title}>Mr Lucky grantt</Text>
-				<Text style={styles.subtitle}>Collected on 17 Jan</Text>
+				<Text style={styles.title}>{data.metadata.title}</Text>
+				<Text style={styles.subtitle}>
+					Collected on {dayjs(data.metadata.issued_at).format('D MMM')}
+				</Text>
 				<TouchableOpacity
 					style={styles.mapstext}
 					onPress={() => console.log('click see on maps')}

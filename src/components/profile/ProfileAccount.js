@@ -8,14 +8,14 @@ import {
 } from 'react-native';
 
 import { Colors } from '../../constants/Colors';
-import { STORE_KEY } from '../../constants/Common';
+import { LEVEL_BADGE, STORE_KEY } from '../../constants/Common';
 import { Font } from '../../constants/Font';
 import Routes from '../../constants/Routes';
 import useStore from '../../lib/store';
 import { ResponsiveFont } from '../../utils/ResponsiveFont';
 import Avatar from '../common/Avatar';
 
-const ProfileAccount = ({ navigation }) => {
+const ProfileAccount = ({ navigation, level }) => {
 	const { accountId, email, removeUser } = useStore();
 
 	const onClickLogout = async () => {
@@ -29,17 +29,16 @@ const ProfileAccount = ({ navigation }) => {
 			<TouchableNativeFeedback onPress={onClickLogout}>
 				<Text style={styles.logoutText}>Logout</Text>
 			</TouchableNativeFeedback>
-			<Avatar />
+			<Avatar accountId={accountId} />
 			<Text style={styles.accountText}>{accountId}</Text>
 			<Text style={styles.accountEmailText}>{email}</Text>
 
-			<View style={styles.accountLevelContainer}>
-				<Image
-					source={require('../../../assets/badge/1.png')}
-					style={styles.accountLevelBadge}
-				/>
-				<Text style={styles.accountLevelText}>Alpha Level</Text>
-			</View>
+			{level && (
+				<View style={styles.accountLevelContainer}>
+					<Image source={LEVEL_BADGE[level]} style={styles.accountLevelBadge} />
+					<Text style={styles.accountLevelText}>{level} Level</Text>
+				</View>
+			)}
 		</View>
 	);
 };

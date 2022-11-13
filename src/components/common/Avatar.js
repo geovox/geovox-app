@@ -1,12 +1,16 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
 const HEX_STRING = '0123456789abcdef';
-const randomGradientColorAvatar = () => {
+const randomGradientColorAvatar = (text) => {
 	let hexCode = '#';
 	for (let i = 0; i < 6; i++) {
-		hexCode += HEX_STRING[Math.floor(Math.random() * HEX_STRING.length)];
+		hexCode +=
+			HEX_STRING[
+				Math.floor(((text.charCodeAt(i) - 33) / (122 - 33)) * HEX_STRING.length)
+			];
 	}
+	console.log('hexcode', hexCode);
 	return hexCode;
 };
 
@@ -22,7 +26,11 @@ const Avatar = ({ accountId }) => {
 		>
 			<LinearGradient
 				// Background Linear Gradient
-				colors={['#4c669f', '#3b5998', '#192f6a']}
+				colors={[
+					randomGradientColorAvatar(accountId.slice(0)),
+					randomGradientColorAvatar(accountId.slice(2)),
+					randomGradientColorAvatar(accountId.slice(4)),
+				]}
 				style={{
 					height: 80,
 					width: 80,
