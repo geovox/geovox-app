@@ -1,11 +1,12 @@
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { Font } from '../../constants/Font';
 
 const FontLoaderWrapper = ({ children }) => {
+	const [appIsReady, setAppIsReady] = useState(false);
 	const [fontsLoaded] = useFonts({
 		[Font.Bold]: require('../../../assets/fonts/Montserrat-Bold.ttf'),
 		[Font.Light]: require('../../../assets/fonts/Montserrat-Light.ttf'),
@@ -17,6 +18,7 @@ const FontLoaderWrapper = ({ children }) => {
 	useEffect(() => {
 		async function prepare() {
 			await SplashScreen.preventAutoHideAsync();
+			setAppIsReady(true);
 		}
 		prepare();
 	}, []);
@@ -27,7 +29,7 @@ const FontLoaderWrapper = ({ children }) => {
 		}
 	}, [fontsLoaded]);
 
-	if (!fontsLoaded) {
+	if (!fontsLoaded || !appIsReady) {
 		return null;
 	}
 

@@ -1,12 +1,22 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import {
+	Image,
+	StyleSheet,
+	Text,
+	TouchableNativeFeedback,
+	View,
+} from 'react-native';
 
 import { Colors } from '../../constants/Colors';
 import { LEVEL_BADGE } from '../../constants/Common';
 import { Font } from '../../constants/Font';
+import Routes from '../../constants/Routes';
 import { ResponsiveFont } from '../../utils/ResponsiveFont';
 
 const ProfileLevelProgress = ({ profile }) => {
+	const navigation = useNavigation();
+
 	if (!profile) return <View style={{ marginVertical: 16 }} />;
 
 	const progress =
@@ -33,7 +43,20 @@ const ProfileLevelProgress = ({ profile }) => {
 				</View>
 			</View>
 			<View>
-				<Ionicons name="ios-chevron-forward-outline" size={24} color="white" />
+				<TouchableNativeFeedback
+					onPress={() =>
+						navigation.navigate(Routes.Webview, {
+							title: 'Geovox',
+							url: 'https://geovox.xyz#features',
+						})
+					}
+				>
+					<Ionicons
+						name="ios-chevron-forward-outline"
+						size={24}
+						color="white"
+					/>
+				</TouchableNativeFeedback>
 			</View>
 		</View>
 	);

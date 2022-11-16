@@ -13,6 +13,7 @@ import {
 import Screen from '../../components/common/Screen';
 import { Colors } from '../../constants/Colors';
 import { Font } from '../../constants/Font';
+import Routes from '../../constants/Routes';
 import { parseImgUrl } from '../../utils';
 import { ResponsiveFont } from '../../utils/ResponsiveFont';
 
@@ -58,7 +59,9 @@ const ItemDetailScreen = ({ navigation, route }) => {
 						<View>
 							<Text style={styles.title}>{data.metadata.title}</Text>
 							<TouchableWithoutFeedback
-								onPress={() => console.log('see on maps')}
+								onPress={() =>
+									navigation.navigate(Routes.ItemLocationMap, { data })
+								}
 							>
 								<View style={styles.seeOnMapsContainer}>
 									<FontAwesome5 name="map" size={18} color={Colors.orange} />
@@ -78,7 +81,7 @@ const ItemDetailScreen = ({ navigation, route }) => {
 					<Text style={styles.headingText}>Token Info</Text>
 					<View style={styles.infoContainer}>
 						<Text style={styles.typeText}>Smart Contract</Text>
-						<Text style={styles.valueText}>nft.xq.testnet</Text>
+						<Text style={styles.valueText}>{data.contract_id}</Text>
 					</View>
 					<View style={styles.infoContainer}>
 						<Text style={styles.typeText}>Token ID</Text>
@@ -88,11 +91,16 @@ const ItemDetailScreen = ({ navigation, route }) => {
 						<Text style={styles.typeText}>Edition</Text>
 						<Text style={styles.valueText}>#{data.edition_id}</Text>
 					</View>
+					{data.owner_id && (
+						<View style={styles.infoContainer}>
+							<Text style={styles.typeText}>Owned by</Text>
+							<Text style={styles.valueText}>{data.owner_id}</Text>
+						</View>
+					)}
 					<View style={styles.infoContainer}>
 						<Text style={styles.typeText}>Rarity</Text>
-						<Text style={styles.valueText}>Super Rare</Text>
+						<Text style={styles.valueText}>Rare</Text>
 					</View>
-
 					<Text style={styles.headingText}>Description</Text>
 					<Text style={styles.typeText}>{data.metadata.description}</Text>
 				</View>

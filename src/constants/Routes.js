@@ -12,4 +12,8 @@ export default {
 
 	ItemDetail: 'ItemDetail',
 	Landing: 'Landing',
+
+	Webview: 'Webview',
+
+	ItemLocationMap: 'ItemLocationMap',
 };

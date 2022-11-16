@@ -1,15 +1,18 @@
 import { FontAwesome, AntDesign } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import calculateDistance from '@turf/distance';
 import axios from 'axios';
 import { useState } from 'react';
 import { Image, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import Modal from 'react-native-modal';
 import { RootSiblingParent } from 'react-native-root-siblings';
+import useSWR from 'swr';
 
 import { Button } from '../../components/common/Button';
-import { API_URL } from '../../constants/Api';
+import { API_URL, PARAS_API_URL } from '../../constants/Api';
 import { Colors } from '../../constants/Colors';
 import { Font } from '../../constants/Font';
+import Routes from '../../constants/Routes';
 import useStore from '../../lib/store';
 import { kFormatter, parseImgUrl } from '../../utils';
 import { ResponsiveFont } from '../../utils/ResponsiveFont';
@@ -21,22 +24,48 @@ const ItemLocationModal = ({
 	onClose,
 	userLocation,
 	itemDetail,
+	isCollected = false,
+	backdropOpacity = 0.7,
 }) => {
 	const [isCollecting, setIsCollecting] = useState(false);
 	const [showModal, setShowModal] = useState(false);
-	const { token } = useStore();
+	const { token, accountId } = useStore();
+	const navigation = useNavigation();
+
+	const {
+		data: tokenData,
+		isValidating,
+		mutate,
+	} = useSWR(
+		accountId && isVisible && !isCollected ? itemDetail.tokenSeriesId : null,
+		async () => {
+			const res = await axios.get(`${PARAS_API_URL}/token`, {
+				params: {
+					owner_id: accountId,
+					token_series_id: itemDetail.tokenSeriesId,
+				},
+			});
+			return res.data.data.results.length > 0;
+		}
+	);
 
 	const distance = calculateDistance(
 		[userLocation?.longitude, userLocation?.latitude],
 		[itemDetail?.longitude, itemDetail?.latitude],
 		{ units: 'meters' }
 	);
-	const isAbleToCollect = distance <= 10;
-	const hasCollected = false;
+	const isAbleToCollect = isVisible ? distance <= 10 : false;
+	const hasCollected = tokenData || isCollected || false;
 
 	if (!itemDetail) return null;
 
 	const handleCollect = async () => {
+		if (hasCollected) {
+			onClose();
+			navigation.navigate(Routes.Profile);
+			return;
+		}
+
 		if (!isAbleToCollect) {
 			setShowModal(true);
 			return;
@@ -59,6 +88,7 @@ const ItemLocationModal = ({
 			CustomToast({ message: error.response.data.message, type: 'error' });
 		}
 		setIsCollecting(false);
+		setTimeout(mutate, 1000);
 	};
 
 	return (
@@ -68,6 +98,7 @@ const ItemLocationModal = ({
 				justifyContent: 'flex-end',
 				margin: 0,
 			}}
+			backdropOpacity={backdropOpacity}
 			useNativeDriverForBackdrop
 			swipeDirection={['down']}
 			onSwipeComplete={onClose}
@@ -102,20 +133,34 @@ const ItemLocationModal = ({
 						<Text style={styles.titleStyle}>{itemDetail.name}</Text>
 						<View style={styles.detailContainer}>
 							<Text style={styles.typeText}>Smart Contract</Text>
-							<Text style={styles.valueText}>nft.xq.testnet</Text>
+							<Text style={styles.valueText}>{itemDetail.contractId}</Text>
 						</View>
 						<View style={styles.detailContainer}>
-							<Text style={styles.typeText}>Token ID</Text>
-							<Text style={styles.valueText}>2883</Text>
-						</View>
-						<View style={styles.detailContainer}>
-							<Text style={styles.typeText}>Collected</Text>
-							<Text style={styles.valueText}>23/50</Text>
+							<Text style={styles.typeText}>Series ID</Text>
+							<Text style={styles.valueText}>{itemDetail.tokenSeriesId}</Text>
 						</View>
 						<View style={styles.detailContainer}>
 							<Text style={styles.typeText}>Rarity</Text>
-							<Text style={styles.valueText}>Super Rare</Text>
+							<Text style={styles.valueText}>Rare</Text>
 						</View>
+						{itemDetail.city && (
+							<View style={styles.detailContainer}>
+								<Text style={styles.typeText}>City</Text>
+								<Text style={styles.valueText}>{itemDetail.city}</Text>
+							</View>
+						)}
+						{itemDetail.tokenId && (
+							<View style={styles.detailContainer}>
+								<Text style={styles.typeText}>Token Id</Text>
+								<Text style={styles.valueText}>{itemDetail.tokenId}</Text>
+							</View>
+						)}
+						{itemDetail.ownerId && (
+							<View style={styles.detailContainer}>
+								<Text style={styles.typeText}>Owned by</Text>
+								<Text style={styles.valueText}>{itemDetail.ownerId}</Text>
+							</View>
+						)}
 						<View>
 							<View style={styles.positionDistance}>
 								{!hasCollected && (
@@ -150,7 +195,7 @@ const ItemLocationModal = ({
 									? 'Collect'
 									: 'Too far'
 							}
-							isLoading={isCollecting}
+							isLoading={isCollecting || isValidating}
 							onPress={handleCollect}
 							containerStyle={{
 								width: '100%',

@@ -27,7 +27,7 @@ const ProfileNFT = ({ data }) => {
 				</Text>
 				<TouchableOpacity
 					style={styles.mapstext}
-					onPress={() => console.log('click see on maps')}
+					onPress={() => navigation.navigate(Routes.ItemLocationMap, { data })}
 				>
 					<Text style={styles.mapstext}>See on Maps</Text>
 				</TouchableOpacity>

@@ -10,8 +10,9 @@ import Routes from './src/constants/Routes';
 import useStore from './src/lib/store';
 import AuthNavigator from './src/navigator/AuthNavigator';
 import HomeNavigator from './src/navigator/HomeNavigator';
-import LandingScreen from './src/screens/Landing/LandingScreen';
+import ItemLocationMapScreen from './src/screens/Explore/ItemLocationMapScreen';
 import ItemDetailScreen from './src/screens/User/ItemDetailScreen';
+import WebScreen from './src/screens/Web';
 
 const Stack = createNativeStackNavigator();
 
@@ -53,6 +54,12 @@ export default function App() {
 					)}
 					<Stack.Screen name={Routes.HomeNavigator} component={HomeNavigator} />
 					<Stack.Screen name={Routes.ItemDetail} component={ItemDetailScreen} />
+					<Stack.Screen name={Routes.Webview} component={WebScreen} />
+					<Stack.Screen
+						name={Routes.ItemLocationMap}
+						component={ItemLocationMapScreen}
+						options={{ gestureEnabled: true }}
+					/>
 				</Stack.Navigator>
 			</NavigationContainer>
 		</RootSiblingParent>
