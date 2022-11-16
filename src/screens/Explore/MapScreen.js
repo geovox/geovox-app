@@ -21,6 +21,7 @@ import { API_URL } from '../../constants/Api';
 import { Colors } from '../../constants/Colors';
 import { Font } from '../../constants/Font';
 import useStore from '../../lib/store';
+import { parseImgUrl } from '../../utils';
 import { ResponsiveFont } from '../../utils/ResponsiveFont';
 
 const MapScreen = () => {
@@ -102,8 +103,8 @@ const MapScreen = () => {
 					<Marker
 						key={`${marker.longitude}-${marker.latitude}-${index}`}
 						coordinate={{
-							latitude: marker.latitude,
-							longitude: marker.longitude,
+							latitude: parseFloat(marker.latitude),
+							longitude: parseFloat(marker.longitude),
 						}}
 						onPress={() => {
 							setModalVisible(true);
@@ -112,7 +113,7 @@ const MapScreen = () => {
 					>
 						<View style={styles.markerContainer}>
 							<Image
-								source={{ uri: marker.images }}
+								source={{ uri: parseImgUrl(marker.images) }}
 								style={styles.markerImage}
 							/>
 							<Text

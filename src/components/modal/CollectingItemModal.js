@@ -15,6 +15,7 @@ import RoadAnimation from '../../../assets/animation/road.json';
 import { Colors } from '../../constants/Colors';
 import { Font } from '../../constants/Font';
 import Routes from '../../constants/Routes';
+import { parseImgUrl } from '../../utils';
 import { ResponsiveFont } from '../../utils/ResponsiveFont';
 
 const CollectingItemModal = ({
@@ -54,7 +55,10 @@ const CollectingItemModal = ({
 				)}
 				{status === 'success' && (
 					<>
-						<Image source={{ uri: itemDetail.images }} style={styles.image} />
+						<Image
+							source={{ uri: parseImgUrl(itemDetail.images) }}
+							style={styles.image}
+						/>
 						<LottieView
 							autoPlay
 							style={styles.confettiAnimation}

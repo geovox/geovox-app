@@ -11,6 +11,7 @@ import { API_URL } from '../../constants/Api';
 import { Colors } from '../../constants/Colors';
 import { Font } from '../../constants/Font';
 import useStore from '../../lib/store';
+import { kFormatter, parseImgUrl } from '../../utils';
 import { ResponsiveFont } from '../../utils/ResponsiveFont';
 import { CustomToast } from '../common/CustomToast';
 import CollectingItemModal from './CollectingItemModal';
@@ -95,7 +96,7 @@ const ItemLocationModal = ({
 							style={{ position: 'absolute', right: 8, top: 8 }}
 						/>
 						<Image
-							source={{ uri: itemDetail.images }}
+							source={{ uri: parseImgUrl(itemDetail.images) }}
 							style={styles.imageStyle}
 						/>
 						<Text style={styles.titleStyle}>{itemDetail.name}</Text>
@@ -128,7 +129,7 @@ const ItemLocationModal = ({
 										<Text style={styles.positionText}>
 											{isAbleToCollect
 												? "You're here"
-												: `${distance.toFixed(0)}m away`}
+												: `${kFormatter(distance.toFixed(0))}m away`}
 										</Text>
 									</>
 								)}
