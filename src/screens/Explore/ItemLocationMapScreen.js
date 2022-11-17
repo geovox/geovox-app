@@ -35,12 +35,15 @@ const ItemLocationMapScreen = ({ navigation, route }) => {
 			</TouchableWithoutFeedback>
 			<MapView
 				style={styles.map}
-				initialRegion={{
-					latitude: parseFloat(marker.latitude) - 0.001,
-					longitude: parseFloat(marker.longitude),
-					latitudeDelta: 0.002,
-					longitudeDelta: 0.002,
-				}}
+				initialRegion={
+					marker.latitude &&
+					marker.longitude && {
+						latitude: parseFloat(marker.latitude) - 0.001,
+						longitude: parseFloat(marker.longitude),
+						latitudeDelta: 0.002,
+						longitudeDelta: 0.002,
+					}
+				}
 				userInterfaceStyle="dark"
 				showsBuildings={false}
 				showsCompass={false}
@@ -51,14 +54,16 @@ const ItemLocationMapScreen = ({ navigation, route }) => {
 				showsIndoorLevelPicker={false}
 				showsIndoors={false}
 			>
-				<Marker
-					key={`${marker.longitude}-${marker.latitude}`}
-					coordinate={{
-						latitude: parseFloat(marker.latitude),
-						longitude: parseFloat(marker.longitude),
-					}}
-					onPress={() => setModalVisible(true)}
-				/>
+				{marker.latitude && marker.longitude && (
+					<Marker
+						key={`${marker.longitude}-${marker.latitude}`}
+						coordinate={{
+							latitude: parseFloat(marker.latitude),
+							longitude: parseFloat(marker.longitude),
+						}}
+						onPress={() => setModalVisible(true)}
+					/>
+				)}
 			</MapView>
 			<ItemLocationModal
 				isVisible={modalVisible}

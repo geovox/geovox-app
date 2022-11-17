@@ -9,10 +9,12 @@ import { RootSiblingParent } from 'react-native-root-siblings';
 import useSWR from 'swr';
 
 import { Button } from '../../components/common/Button';
-import { API_URL, PARAS_API_URL } from '../../constants/Api';
+import { API_URL } from '../../constants/Api';
 import { Colors } from '../../constants/Colors';
+import { NFT_CONTRACT_ACCOUNT } from '../../constants/Common';
 import { Font } from '../../constants/Font';
 import Routes from '../../constants/Routes';
+import { viewFunction } from '../../lib/near';
 import useStore from '../../lib/store';
 import { kFormatter, parseImgUrl } from '../../utils';
 import { ResponsiveFont } from '../../utils/ResponsiveFont';
@@ -39,13 +41,15 @@ const ItemLocationModal = ({
 	} = useSWR(
 		accountId && isVisible && !isCollected ? itemDetail.tokenSeriesId : null,
 		async () => {
-			const res = await axios.get(`${PARAS_API_URL}/token`, {
-				params: {
-					owner_id: accountId,
+			const res = await viewFunction({
+				methodName: 'is_account_has_series',
+				args: {
+					account_id: accountId,
 					token_series_id: itemDetail.tokenSeriesId,
 				},
+				receiverId: NFT_CONTRACT_ACCOUNT,
 			});
-			return res.data.data.results.length > 0;
+			return res;
 		}
 	);
 
@@ -75,7 +79,9 @@ const ItemLocationModal = ({
 		setShowModal(true);
 		try {
 			await axios.post(
-				`${API_URL}/mint-nft`,
+				itemDetail.type === 'onboard'
+					? `${API_URL}/mint-nft-onboard`
+					: `${API_URL}/mint-nft`,
 				{
 					latitude: userLocation.latitude,
 					longitude: userLocation.longitude,
@@ -83,6 +89,7 @@ const ItemLocationModal = ({
 				},
 				{ headers: { Authorization: token } }
 			);
+			setShowModal('success');
 		} catch (error) {
 			setShowModal(false);
 			CustomToast({ message: error.response.data.message, type: 'error' });
@@ -105,7 +112,7 @@ const ItemLocationModal = ({
 		>
 			<CollectingItemModal
 				itemDetail={itemDetail}
-				showModal={showModal}
+				showModal={Boolean(showModal)}
 				onClose={() => setShowModal(false)}
 				onCloseAll={onClose}
 				status={
@@ -113,7 +120,9 @@ const ItemLocationModal = ({
 						? 'unreachable'
 						: isCollecting
 						? 'loading'
-						: 'success'
+						: showModal === 'success'
+						? 'success'
+						: 'error'
 				}
 			/>
 			<RootSiblingParent>
@@ -133,7 +142,13 @@ const ItemLocationModal = ({
 						<Text style={styles.titleStyle}>{itemDetail.name}</Text>
 						<View style={styles.detailContainer}>
 							<Text style={styles.typeText}>Smart Contract</Text>
-							<Text style={styles.valueText}>{itemDetail.contractId}</Text>
+							<Text
+								style={styles.valueText}
+								ellipsizeMode="tail"
+								numberOfLines={1}
+							>
+								{itemDetail.contractId}
+							</Text>
 						</View>
 						<View style={styles.detailContainer}>
 							<Text style={styles.typeText}>Series ID</Text>
@@ -170,7 +185,6 @@ const ItemLocationModal = ({
 											size={18}
 											color={Colors.white}
 										/>
-
 										<Text style={styles.positionText}>
 											{isAbleToCollect
 												? "You're here"
@@ -250,6 +264,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 8,
 		paddingVertical: 4,
 		width: '100%',
+		overflow: 'hidden',
 	},
 	typeText: {
 		fontFamily: Font.Regular,

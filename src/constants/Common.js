@@ -7,6 +7,8 @@ export const isAndroid = Platform.OS === 'android';
 export const isIOS = Platform.OS === 'ios';
 
 export const ROOT_ACCOUNT = '.johncena.testnet';
+export const NFT_CONTRACT_ACCOUNT = 'dev-1668533416174-51119057530537';
+
 export const STORE_KEY = 'LOGGED_IN_USER';
 
 export const LEVEL_BADGE = {
@@ -15,3 +17,5 @@ export const LEVEL_BADGE = {
 	Adventurer: require('../../assets/badge/3.png'),
 	Demigod: require('../../assets/badge/4.png'),
 };
+
+export const PAGE_SIZE = 10;

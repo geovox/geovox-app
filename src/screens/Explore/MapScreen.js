@@ -1,7 +1,7 @@
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import axios from 'axios';
 import * as Location from 'expo-location';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
 	Dimensions,
 	Image,
@@ -11,7 +11,7 @@ import {
 	View,
 } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
-import useSWR from 'swr';
+import useSWR from 'swr/immutable';
 
 import { CustomToast } from '../../components/common/CustomToast';
 import Screen from '../../components/common/Screen';
@@ -28,8 +28,11 @@ const MapScreen = () => {
 	const [location, setLocation] = useState(null);
 	const [modalVisible, setModalVisible] = useState(false);
 	const [selectedItem, setSelectedItem] = useState(null);
+	const [visibleRegion, setVisibleRegion] = useState(null);
 
 	const { token } = useStore();
+
+	const mapRef = useRef(null);
 
 	const {
 		data: markersData,
@@ -39,12 +42,26 @@ const MapScreen = () => {
 		axios
 			.get(`${API_URL}/locations`, {
 				params: {
-					latitude: location.coords.latitude,
-					longitude: location.coords.longitude,
+					latitude: visibleRegion?.latitude || location.coords.latitude,
+					longitude: visibleRegion?.longitude || location.coords.longitude,
 				},
 				headers: { Authorization: token },
 			})
 			.then((res) => res.data)
+	);
+
+	const { data: markersOnboardData } = useSWR(
+		location ? '/api/locations-onboard' : null,
+		async () =>
+			axios
+				.get(`${API_URL}/locations-onboard`, {
+					params: {
+						latitude: location.coords.latitude,
+						longitude: location.coords.longitude,
+					},
+					headers: { Authorization: token },
+				})
+				.then((res) => res.data)
 	);
 
 	useEffect(() => {
@@ -60,13 +77,19 @@ const MapScreen = () => {
 			}
 			await Location.watchPositionAsync(
 				{ accuracy: 6, distanceInterval: 3 },
-				(location) => {
-					console.log('listened location', location);
-					setLocation(location);
-				}
+				(location) => setLocation(location)
 			);
 		})();
 	}, []);
+
+	const centeringUserLocation = () => {
+		mapRef?.current?.animateToRegion({
+			latitude: location.coords?.latitude || 0,
+			longitude: location.coords?.longitude || 0,
+			latitudeDelta: 0.002,
+			longitudeDelta: 0.002,
+		});
+	};
 
 	if (!location) return null;
 
@@ -77,7 +100,12 @@ const MapScreen = () => {
 			</View>
 			<TouchableNativeFeedback onPress={mutate}>
 				<View style={styles.refreshIconContainer}>
-					<MaterialIcons name="refresh" size={24} color="black" />
+					<MaterialIcons name="refresh" size={24} color={Colors.black} />
+				</View>
+			</TouchableNativeFeedback>
+			<TouchableNativeFeedback onPress={centeringUserLocation}>
+				<View style={styles.locationIconContainer}>
+					<FontAwesome name="location-arrow" size={24} color={Colors.black} />
 				</View>
 			</TouchableNativeFeedback>
 			<MapView
@@ -89,19 +117,50 @@ const MapScreen = () => {
 					longitudeDelta: 0.002,
 				}}
 				userInterfaceStyle="dark"
+				ref={mapRef}
 				showsUserLocation
 				showsBuildings={false}
 				showsCompass={false}
 				showsTraffic={false}
 				showsScale={false}
-				showsMyLocationButton
+				showsMyLocationButton={false}
 				showsPointsOfInterest={false}
 				showsIndoorLevelPicker={false}
 				showsIndoors={false}
+				onRegionChangeComplete={(region) => setVisibleRegion(region)}
 			>
 				{markersData?.results?.map((marker, index) => (
 					<Marker
 						key={`${marker.longitude}-${marker.latitude}-${index}`}
+						coordinate={{
+							latitude: parseFloat(marker.latitude),
+							longitude: parseFloat(marker.longitude),
+						}}
+						onPress={() => {
+							setModalVisible(true);
+							setSelectedItem(marker);
+						}}
+					>
+						<View style={styles.markerContainer}>
+							<Image
+								source={{ uri: parseImgUrl(marker.images) }}
+								style={styles.markerImage}
+							/>
+							<Text
+								style={styles.markerText}
+								ellipsizeMode="tail"
+								numberOfLines={1}
+							>
+								{marker.name}
+							</Text>
+						</View>
+					</Marker>
+				))}
+
+				{/* Onboarding NFT */}
+				{markersOnboardData?.results?.map((marker, index) => (
+					<Marker
+						key={`onboard-${marker.longitude}-${marker.latitude}-${index}`}
 						coordinate={{
 							latitude: parseFloat(marker.latitude),
 							longitude: parseFloat(marker.longitude),
@@ -155,7 +214,24 @@ const styles = StyleSheet.create({
 	},
 	refreshIconContainer: {
 		position: 'absolute',
+		alignItems: 'center',
+		justifyContent: 'center',
+		width: 32,
+		height: 32,
 		top: 40,
+		right: 8,
+		padding: 4,
+		borderRadius: 20,
+		zIndex: 1,
+		backgroundColor: Colors.orange,
+	},
+	locationIconContainer: {
+		position: 'absolute',
+		alignItems: 'center',
+		justifyContent: 'center',
+		width: 32,
+		height: 32,
+		top: 84,
 		right: 8,
 		padding: 4,
 		borderRadius: 20,

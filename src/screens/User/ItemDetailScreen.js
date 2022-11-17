@@ -34,11 +34,16 @@ const ItemDetailScreen = ({ navigation, route }) => {
 		});
 	}, []);
 
+	const extra = data.metadata.extra ? JSON.parse(data.metadata.extra) : {};
+
 	return (
 		<Screen>
 			<ScrollView
 				bounces={false}
+				showsVerticalScrollIndicator={false}
+				showsHorizontalScrollIndicator={false}
 				style={{ marginTop: 16, paddingHorizontal: 16 }}
+				stickyHeaderIndices={[0]}
 			>
 				<TouchableWithoutFeedback onPress={() => navigation.goBack()}>
 					<View style={styles.backButton}>
@@ -102,7 +107,9 @@ const ItemDetailScreen = ({ navigation, route }) => {
 						<Text style={styles.valueText}>Rare</Text>
 					</View>
 					<Text style={styles.headingText}>Description</Text>
-					<Text style={styles.typeText}>{data.metadata.description}</Text>
+					<Text style={styles.typeText}>
+						{data.metadata.description || extra.description}
+					</Text>
 				</View>
 			</ScrollView>
 		</Screen>

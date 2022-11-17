@@ -30,14 +30,16 @@ const CollectingItemModal = ({
 	return (
 		<Modal animationIn="zoomIn" animationOut="zoomOut" isVisible={showModal}>
 			<View style={styles.container}>
-				{status === 'unreachable' && (
+				{(status === 'unreachable' || status === 'error') && (
 					<>
 						<LottieView
 							autoPlay
 							style={styles.loadingMapAnimation}
 							source={RoadAnimation}
 						/>
-						<Text style={styles.title}>You're too far</Text>
+						<Text style={styles.title}>
+							{status === 'error' ? 'Something wrong' : "You're too far"}
+						</Text>
 						<TouchableNativeFeedback onPress={onClose}>
 							<Text style={styles.dismissText}>Close</Text>
 						</TouchableNativeFeedback>
