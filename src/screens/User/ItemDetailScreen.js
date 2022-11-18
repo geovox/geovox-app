@@ -12,6 +12,7 @@ import {
 
 import Screen from '../../components/common/Screen';
 import { Colors } from '../../constants/Colors';
+import { NFT_CONTRACT_ACCOUNT } from '../../constants/Common';
 import { Font } from '../../constants/Font';
 import Routes from '../../constants/Routes';
 import { parseImgUrl } from '../../utils';
@@ -86,7 +87,9 @@ const ItemDetailScreen = ({ navigation, route }) => {
 					<Text style={styles.headingText}>Token Info</Text>
 					<View style={styles.infoContainer}>
 						<Text style={styles.typeText}>Smart Contract</Text>
-						<Text style={styles.valueText}>{data.contract_id}</Text>
+						<Text style={styles.valueText}>
+							{data.contract_id || NFT_CONTRACT_ACCOUNT}
+						</Text>
 					</View>
 					<View style={styles.infoContainer}>
 						<Text style={styles.typeText}>Token ID</Text>

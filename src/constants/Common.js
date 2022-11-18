@@ -6,8 +6,8 @@ export const SCREEN_WIDTH = Dimensions.get('window').width;
 export const isAndroid = Platform.OS === 'android';
 export const isIOS = Platform.OS === 'ios';
 
-export const ROOT_ACCOUNT = '.johncena.testnet';
-export const NFT_CONTRACT_ACCOUNT = 'dev-1668533416174-51119057530537';
+export const ROOT_ACCOUNT = '.gvx.testnet';
+export const NFT_CONTRACT_ACCOUNT = 'nft.gvx.testnet';
 
 export const STORE_KEY = 'LOGGED_IN_USER';
 
