@@ -23,7 +23,10 @@ const ProfileNFT = ({ data }) => {
 			<View style={styles.detailContainer}>
 				<Text style={styles.title}>{data.metadata.title}</Text>
 				<Text style={styles.subtitle}>
-					Collected on {dayjs(data.metadata.issued_at).format('D MMM')}
+					Collected on{' '}
+					{dayjs(parseInt(data.metadata.issued_at.slice(0, 13))).format(
+						'D MMM'
+					)}
 				</Text>
 				<TouchableOpacity
 					style={styles.mapstext}
